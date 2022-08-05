@@ -1,0 +1,30 @@
+<?php
+
+namespace DummyNamespace;
+
+use Model;
+
+class DummyClass
+{
+    
+    public function created(Model $model)
+    {
+        //
+    }
+
+    public function updated(Model $model)
+    {
+        //
+    }
+
+    public function deleted(Model $model)
+    {
+        //
+    }
+
+   
+    public function forceDeleted(Model $model)
+    {
+        //
+    }
+}

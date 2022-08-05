@@ -1,0 +1,17 @@
+.table {
+    border-collapse: collapse;
+}
+
+.table td,
+th {
+    border: 1px solid black !important;
+    padding: 3px;
+}
+
+.table-sortable tbody tr td:first-child {
+    cursor: move;
+}
+
+.table-sortable tbody tr td:last-child {
+    text-align: center;
+}

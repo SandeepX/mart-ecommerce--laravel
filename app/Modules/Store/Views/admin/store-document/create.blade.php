@@ -1,0 +1,136 @@
+@extends('Admin::layout.common.masterlayout')
+@section('content')
+    <div class="content-wrapper">
+    @include("Admin::layout.partials.breadcrumb",
+    [
+    'page_title'=>$title,
+    'sub_title'=> "Create {$title}",
+    'icon'=>'home',
+    'sub_icon'=>'',
+    'manage_url'=>route($base_route.'.create', $store->slug),
+    ])
+
+        <section class="content">
+            <div class="row">
+                <!-- left column -->
+                <div class="col-md-12">
+                    <!-- general form elements -->
+                    <div class="box box-primary">
+                        <div class="box-header with-border">
+
+                            <h3 class="box-title">Add A {{$title}}</h3>
+
+                        </div>
+
+                        <!-- /.box-header -->
+                        @include("Admin::layout.partials.flash_message")
+                        <div class="box-body">
+                            <form class="form-horizontal" id="storeDocument" role="form" action="{{route($base_route.'.store', $store->slug)}}" enctype="multipart/form-data" method="post">
+                                {{csrf_field()}}
+
+                                <div class="box-body">
+                                        <tr>
+                                            <div class="form-group">
+                                                <label class="col-sm-2 control-label">Document</label>
+                                                <div class="col-sm-6">
+                                                    <table class="table" id="dynamic_field">
+                                                        <tr>
+                                                            <td>
+                                                                <input type="text" class="form-control" name="document_names[]" required >
+                                                            </td>
+
+                                                            <td>
+                                                                <input type="file" class="form-control" name="document_files[]" required >
+                                                            </td>
+                                                        </tr>
+                                                    </table>
+                                                    <button type="button" id="add_more" style="margin-left:8px" class="btn btn-success">Add More</button>
+                                                </div>
+                                            </div>
+
+                                        </tr>
+                                </div>
+                                <!-- /.box-body -->
+
+                                <div class="box-footer">
+                                    <button type="submit" style="width: 49%;margin-left: 17%;" class="btn btn-block btn-primary storeDocument">Add</button>
+                                </div>
+                            </form>
+                        </div>
+
+                        @if(isset($storeDocuments) && count($storeDocuments)>0)
+
+                        <table id="{{ $base_route }}-table" class="table table-bordered table-striped" cellspacing="0" width="100%">
+                            <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Name</th>
+                                <th>File</th>
+                                <th>Action</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                                @foreach($storeDocuments as $i => $document)
+                                    <tr>
+                                        <td>{{++$i}}</td>
+                                        <td>{{$document->document_name}}</td>
+                                        <td>
+                                            <a href="{{asset('uploads/vendor/documents/'.$document->document_file)}}">{{ $document->document_file }}</a>
+                                        </td>
+                                        <td>
+                                            {!! \App\Modules\Application\Presenters\DataTable::makeDeleteAction('Delete',route('admin.stores.documents.destroy', [$store->slug, $document->id]),$document,'Document',$document->document_name)!!}
+                                        </td>
+
+                                    </tr>
+                                    @endforeach
+                            </tbody>
+
+                        </table>
+
+                        @endif
+                    </div>
+                    <!-- /.box -->
+                </div>
+                <!--/.col (left) -->
+
+            </div>
+            <!-- /.row -->
+        </section>
+
+    </div>
+@endsection
+
+    @push('scripts')
+        @includeIf('Store::admin.store-document.script');
+
+            <script>
+                $('#storeDocument').submit(function (e, params) {
+                    var localParams = params || {};
+
+                    if (!localParams.send) {
+                        e.preventDefault();
+                    }
+                    Swal.fire({
+                        title: 'Are you sure you want to store Document ?',
+                        showCancelButton: true,
+                        confirmButtonText: `Yes`,
+                        padding:'10em',
+                        width:'500px'
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+
+                            $(e.currentTarget).trigger(e.type, { 'send': true });
+                            Swal.fire({
+                                title: 'Please wait...',
+                                hideClass: {
+                                    popup: ''
+                                }
+                            })
+                        }
+                    })
+                });
+            </script>
+
+    @endpush
+
+
